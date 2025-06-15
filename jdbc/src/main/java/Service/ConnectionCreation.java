@@ -1,5 +1,6 @@
 package Service;
 
+import CRUDtoDB.CallableStatementCRUD;
 import CRUDtoDB.PreparedStatementCrud;
 import CRUDtoDB.StatementCRUD;
 
@@ -99,6 +100,52 @@ public class ConnectionCreation {
         }
         return 0;
     }
+    public static int handleCallableStatement(Connection con, Scanner sc) throws Exception {
+        try (CallableStatementCRUD cstmtCrud = new CallableStatementCRUD()) {
+            int option = 0;
+            while (option != 5) {
+                System.out.println("=====Callable statement arena======");
+                System.out.println("1.Create user");
+                System.out.println("2.Read user");
+                System.out.println("3.Update user");
+                System.out.println("4.Delete user");
+                System.out.println("5.Return to Main Menu");
+                option = sc.nextInt();
+                switch (option) {
+                    case 1:
+                        System.out.println("enter name of user:- ");
+                        String name = sc.next();
+                        System.out.println("enter email of user:- ");
+                        String email = sc.next();
+                        cstmtCrud.createUser(con,name, email);
+                        break;
+                    case 2:
+                        cstmtCrud.getAllUsers(con);
+                        break;
+                    case 3:
+                        System.out.println("Id of User to Update");
+                        int id = sc.nextInt();
+                        System.out.println("enter new Name");
+                        String newname = sc.next();
+                        System.out.println("enter new Email");
+                        String newemail = sc.next();
+
+                        cstmtCrud.UpdateUser(con,id,newname,newemail);
+                        break;
+                    case 4:
+                        System.out.println("enter user id to delete");
+                        id = sc.nextInt();
+                        cstmtCrud.deleteUserById(con,id);
+                        break;
+                    case 5:
+                        System.out.println("Returning to main menu...");
+                        System.out.println("============================");
+                        return 0;
+                }
+            }
+        }
+        return 0;
+    }
     public void start() {
         String url = "jdbc:mysql://localhost:3306/testJDBC";
         String userName = "newuser";
@@ -126,6 +173,7 @@ public class ConnectionCreation {
                         handlePreparedStatement(con,sc);
                         break;
                     case 3:
+                        handleCallableStatement(con,sc);
                         break;
                     case 4:
                         System.out.println("Exiting...");
